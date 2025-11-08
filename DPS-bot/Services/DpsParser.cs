@@ -209,6 +209,6 @@ namespace DPS_bot.Services
             string fileName = Path.GetFileNameWithoutExtension(rawUrl);
 
             return string.IsNullOrEmpty(fileName) ? null : fileName;
-        }
+        }        
     }
 }

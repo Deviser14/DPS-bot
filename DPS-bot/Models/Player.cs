@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DPS_bot.Models
 {
-    internal class Player
+    public class Player
     {
         public string? Name { get; set; }
         public string? Class { get; set; }

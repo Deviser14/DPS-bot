@@ -6,14 +6,19 @@ using System.Threading.Tasks;
 
 namespace DPS_bot.Models
 {
-    internal class Fight
+    public class Fight
     {
-        public string RaidName { get; set; }
-        public int PlayersCount { get; set; }
-        public DateTime FightDate { get; set; }
-        public string BossName { get; set; }
-        public List<Player> Players { get; set; }
+        public string BossName { get; set; } = string.Empty;
+        public string RaidName { get; set; } = string.Empty;
+        public int TotalPlayers { get; set; }
+        public int Tanks { get; set; }
+        public int Healers { get; set; }
+        public int Dps { get; set; }
+        public DateTime FightDate { get; set; } = DateTime.MinValue;
+        public TimeSpan FightDuration { get; set; } = TimeSpan.Zero;
+        public List<Player> Players { get; set; } = new List<Player>();
         public int BossPulls { get; set; }
-        public List<Item> Loot { get; set; }
+        public List<Item> Loot { get; set; } = new List<Item>();
+        public string DetailsUrl { get; set; } = string.Empty;
     }
 }

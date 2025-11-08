@@ -12,8 +12,9 @@ class Program
 {
     static void Main()
     {
-        
-        DpsParser parser = new DpsParser();
-        parser.Parse("https://sirus.su/base/pve-progression/boss-kill/x3/64814");
+        BossKillParser bossKillParser = new BossKillParser();
+        bossKillParser.ParseFromGuildPage("https://sirus.su/base/guilds/x3/3029/latest-boss-kills");
+        //DpsParser parser = new DpsParser();
+        //parser.Parse("https://sirus.su/base/pve-progression/boss-kill/x3/64814");
     }
 }
