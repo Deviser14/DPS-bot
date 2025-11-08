@@ -1,0 +1,137 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="DPS_bot.Models.Fight" Collapsed="true">
+    <Position X="10.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACIAAASAAAAAACAAAAAAQAQIAAQgAAAAAAAIAEAEAAA=</HashCode>
+      <FileName>Models\Fight.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DPS_bot.Models.Item" Collapsed="true">
+    <Position X="7" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAgAAAAAACAAAAAAAAgA=</HashCode>
+      <FileName>Models\Item.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DPS_bot.Models.Player" Collapsed="true">
+    <Position X="3.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAIAAAAAAAAAAQAAAIAAAQAAAAAAAAAAAAiQAAACAA=</HashCode>
+      <FileName>Models\Player.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DPS_bot.Repositories.FightRepository" Collapsed="true">
+    <Position X="3.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAIAgIAAAAAAAAAAAAACAAAAAAAAAAAAAIAACAAQAAA=</HashCode>
+      <FileName>Repositories\FightRepository.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DPS_bot.Services.BossKillParser" Collapsed="true">
+    <Position X="3.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAABAAAAEAAA=</HashCode>
+      <FileName>Services\BossKillParser.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DPS_bot.Services.BossKillStorage" Collapsed="true">
+    <Position X="5.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgIAAAAAAAAAAAAICAAEAAAAAAAAAAAAAAAAAIAA=</HashCode>
+      <FileName>Services\BossKillStorage.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DPS_bot.Services.DpsParser" Collapsed="true">
+    <Position X="7" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgABAAAAAAAGAAAAAAAIAAAAAgABAEAAAAACAAAAA=</HashCode>
+      <FileName>Services\DpsParser.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DPS_bot.Services.LoggerService" Collapsed="true">
+    <Position X="10.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAAAQAAAAAAgAEBAAAAAIEgJAAAAAAAAAQAAAAg=</HashCode>
+      <FileName>Services\LoggerService.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DPS_bot.Services.ReportService" Collapsed="true">
+    <Position X="7" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Services\ReportService.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ConfigService" Collapsed="true">
+    <Position X="10.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAIAAAAAAAgAAAAAAAIAAAAAAAAAAQAAAAA=</HashCode>
+      <FileName>Services\ConfigService.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BotConfig" Collapsed="true">
+    <Position X="8.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAgAAAAAAAAAABAAAAAAAAAAA=</HashCode>
+      <FileName>Services\ConfigService.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiscordConfig" Collapsed="true">
+    <Position X="3.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAAAAAAAAAAAAAAAAAAABAAAAAAAAAQAAAABAAA=</HashCode>
+      <FileName>Services\ConfigService.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DomenConfig" Collapsed="true">
+    <Position X="5.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAA=</HashCode>
+      <FileName>Services\ConfigService.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LoggerConfig" Collapsed="true">
+    <Position X="8.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAQAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Services\ConfigService.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Program" Collapsed="true">
+    <Position X="5.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>Program.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DPS_bot.Utils.EmbedBuilderFactory" Collapsed="true">
+    <Position X="8.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Utils\EmbedBuilderFactory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DPS_bot.Utils.FileHelper" Collapsed="true">
+    <Position X="5.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Utils\FileHelper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DPS_bot.Bot" Collapsed="true">
+    <Position X="7" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Bot.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Enum Name="DPS_bot.Services.LogLevel" Collapsed="true">
+    <Position X="3.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAYAAAAAAABAAAAAAAAAAAAAAAEAAAAA=</HashCode>
+      <FileName>Services\LoggerService.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Threading;
 
 namespace DPS_bot.Services
 {
@@ -14,11 +13,17 @@ namespace DPS_bot.Services
 
     public static class LoggerService
     {
-        private static readonly string LogDirectory = "Data/Logs";
-        private static readonly object _lock = new object();
+        private static string _logDirectory = "Data/Logs";
+        private static LogLevel _minimumLevel = LogLevel.Debug;
+        private static bool _writeToConsole = true;
+        private static readonly object _lock = new();
 
-        public static LogLevel MinimumLevel { get; set; } = LogLevel.Debug;
-        public static bool WriteToConsole { get; set; } = true;
+        public static void Configure(LoggerConfig config)
+        {
+            _logDirectory = config.LogDirectory;
+            _minimumLevel = Enum.TryParse(config.MinimumLevel, true, out LogLevel level) ? level : LogLevel.Debug;
+            _writeToConsole = config.WriteToConsole;
+        }
 
         public static void LogInfo(string message) => WriteLog(LogLevel.Info, message);
         public static void LogError(string message) => WriteLog(LogLevel.Error, message);
@@ -27,24 +32,23 @@ namespace DPS_bot.Services
 
         private static void WriteLog(LogLevel level, string message)
         {
-            if (level < MinimumLevel) return;
+            if (level < _minimumLevel) return;
 
             try
             {
                 lock (_lock)
                 {
-                    if (!Directory.Exists(LogDirectory))
-                        Directory.CreateDirectory(LogDirectory);
+                    if (!Directory.Exists(_logDirectory))
+                        Directory.CreateDirectory(_logDirectory);
 
                     string fileName = $"{level.ToString().ToLower()}_{DateTime.Now:yyyy-MM-dd}.log";
-                    string fullPath = Path.Combine(LogDirectory, fileName);
+                    string fullPath = Path.Combine(_logDirectory, fileName);
                     string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                     string formatted = $"[{timestamp}] [{level.ToString().ToUpper()}] {message}{Environment.NewLine}";
 
                     File.AppendAllText(fullPath, formatted);
-                    Console.WriteLine($"[DEBUG] Current Directory: {Directory.GetCurrentDirectory()}");
 
-                    if (WriteToConsole)
+                    if (_writeToConsole)
                     {
                         var prevColor = Console.ForegroundColor;
                         Console.ForegroundColor = GetColorForLevel(level);
@@ -55,11 +59,7 @@ namespace DPS_bot.Services
             }
             catch (Exception ex)
             {
-                try
-                {
-                    Console.WriteLine($"[Logger] Ошибка записи лога: {ex.Message}");
-                }
-                catch { }
+                Console.WriteLine($"[Logger] Ошибка записи лога: {ex.Message}");
             }
         }
 
@@ -72,11 +72,12 @@ namespace DPS_bot.Services
                 LogLevel.Error => ConsoleColor.Red,
                 _ => ConsoleColor.White
             };
+
         public static void CleanOldLogs(int daysToKeep = 30)
         {
             try
             {
-                var files = Directory.GetFiles(LogDirectory, "*.log");
+                var files = Directory.GetFiles(_logDirectory, "*.log");
                 foreach (var file in files)
                 {
                     var creationTime = File.GetCreationTime(file);

@@ -8,6 +8,9 @@ namespace DPS_bot.Models
 {
     public class Fight
     {
+        public string GetKey() =>
+            $"{BossName}_{RaidName}_{FightDate:yyyy-MM-dd_HH-mm}";
+
         public string BossName { get; set; } = string.Empty;
         public string RaidName { get; set; } = string.Empty;
         public int TotalPlayers { get; set; }

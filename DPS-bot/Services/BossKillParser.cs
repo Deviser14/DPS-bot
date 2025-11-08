@@ -1,15 +1,28 @@
-﻿using DPS_bot.Models;
+﻿using DPS_bot.Config;
+using DPS_bot.Models;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
 using SeleniumExtras.WaitHelpers;
 using System;
 using System.Linq;
+using System.Net.WebSockets;
 
 namespace DPS_bot.Services
 {
     public class BossKillParser
     {
+
+            private readonly string _baseUrl;
+            private readonly string _reportPath;
+
+            public BossKillParser(AppConfig config)
+            {
+                _baseUrl = config.Domen.BaseUrl;
+                _reportPath = config.Bot.ReportPath;
+            }
+
+
         /// <summary>
         /// Парсит страницу гильдии и возвращает список боёв.
         /// </summary>
@@ -95,6 +108,32 @@ namespace DPS_bot.Services
                         DateTime fightDate = DateTime.MinValue;
                         DateTime.TryParse(cols[6].Text?.Trim() ?? string.Empty, out fightDate);
 
+                        LoggerService.LogDebug("[Parse] Парсим ссылку подробностей рейда");
+                        var detailsUrl = string.Empty;
+                        try
+                        {
+                            var detailAnchor = cols[7].FindElement(By.TagName("a"));
+                            var detailHref = detailAnchor.GetAttribute("href") ?? string.Empty;
+                            LoggerService.LogDebug($"[Parse] Detail URL found: {detailHref}");
+                            if (!string.IsNullOrEmpty(detailHref))
+                            {
+                                var detailUri = new Uri(detailHref, UriKind.RelativeOrAbsolute);
+                                if (!detailUri.IsAbsoluteUri)
+                                {
+                                    detailUri = new Uri(new Uri(_baseUrl), detailUri);
+                                    detailsUrl = detailUri.ToString();
+                                }
+                                LoggerService.LogDebug($"[Parse] Absolute Detail URL: {detailUri}");
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+
+                            LoggerService.LogError($"[Parse] Ссылка на подробности боя не найдена в строке #{rowIndex}: " +
+                                $"{ex.GetType().Name}: {ex.Message}");
+                            LoggerService.LogDebug($"[Parse] Row HTML (td): {cols[7].GetAttribute("outerHTML")}");
+                        }
+
                         kills.Add(new Fight
                         {
                             BossName = bossName ?? string.Empty,
@@ -104,7 +143,8 @@ namespace DPS_bot.Services
                             Healers = healers,
                             Dps = dps,
                             FightDuration = fightDuration,
-                            FightDate = fightDate
+                            FightDate = fightDate,
+                            DetailsUrl = detailsUrl
                         });
                     }
                     catch (Exception exRow)
@@ -134,7 +174,7 @@ namespace DPS_bot.Services
 
             foreach (var kill in kills)
             {
-                LoggerService.LogInfo($"[ParseFromGuildPage] Parsed kill: Boss={kill.BossName}, Raid={kill.RaidName} {kill.TotalPlayers}, " +
+                LoggerService.LogDebug($"[ParseFromGuildPage] Parsed kill: Boss={kill.BossName}, Raid={kill.RaidName} {kill.TotalPlayers}, " +
                                       $"Date={kill.FightDate:dd.MM.yyyy HH:mm:ss}, " +
                                       $"(Tanks={kill.Tanks}, Healers={kill.Healers}, DPS={kill.Dps}), " +
                                       $"Duration={kill.FightDuration:mm\\:ss}");

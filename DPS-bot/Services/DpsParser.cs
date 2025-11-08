@@ -25,7 +25,7 @@ namespace DPS_bot.Services
         {
         }
 
-        public void Parse(string fightUrl)
+        public List<Player> Parse(string fightUrl)
         {
             if (string.IsNullOrEmpty(fightUrl) || !Uri.IsWellFormedUriString(fightUrl, UriKind.Absolute))
             {
@@ -57,6 +57,7 @@ namespace DPS_bot.Services
                 driver?.Quit();
                 LoggerService.LogInfo("[Parse] Driver quit, finished.");
             }
+            return Players;
         }
 
         public List<Player> ParseFightResults(ChromeDriver driver)

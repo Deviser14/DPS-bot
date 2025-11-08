@@ -1,31 +1,56 @@
 ﻿using DPS_bot.Models;
+using DPS_bot.Repositories;
 using DPS_bot.Services;
-using OpenQA.Selenium;
-using OpenQA.Selenium.Chrome;
-using OpenQA.Selenium.Support.UI;
-// Заменяем SeleniumExtras на актуальный пакет
-using SeleniumExtras.WaitHelpers;
+using DPS_bot.Config;
+using Microsoft.Extensions.Configuration;
 using System;
-using System.Text.RegularExpressions;
+using System.IO;
 
 class Program
 {
     static void Main()
     {
-        // Настройка логгера (если есть конфиг)
-        //LoggerService.MinimumLevel = LogLevel.Debug;
-        //LoggerService.WriteToConsole = true;
+        // Загрузка конфигурации
+        var configuration = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json", optional: false)
+            .Build();
 
-        // 🧹 Очистка старых логов
+        // Загружаем AppConfig (а не ConfigService)
+        var appConfig = configuration.Get<AppConfig>();
+
+        // Настройка логгера
+        LoggerService.Configure(appConfig.Logger);
         LoggerService.CleanOldLogs(30);
-
-        // Основная логика
         LoggerService.LogInfo("Бот запущен.");
-        // ...
+        Console.WriteLine($"Guild ID: {appConfig.Discord.GuildId}");
 
-        BossKillParser bossKillParser = new BossKillParser();
-        bossKillParser.ParseFromGuildPage("https://sirus.su/base/guilds/x3/3029/latest-boss-kills");
-        DpsParser parser = new DpsParser();
-        parser.Parse("https://sirus.su/base/pve-progression/boss-kill/x3/64814");
+        // Инициализация репозитория
+        var reportPath = appConfig.Bot.ReportPath;
+        var filePath = Path.Combine(reportPath, "boss_kills.json");
+        var repo = new FightRepository(filePath);
+
+        // Парсинг свежих боёв
+        var bossKillParser = new BossKillParser(appConfig);
+        var freshFights = bossKillParser.ParseFromGuildPage(appConfig.Domen.BaseUrl); // без подробностей
+
+        var dpsParser = new DpsParser();
+
+        foreach (var fight in freshFights)
+        {
+            if (repo.Contains(fight)) continue;
+
+            try
+            {
+                var detailed = bossKillParser.ParseFromGuildPage; // Получаем подробности
+                repo.Add(detailed);
+            }
+            catch (Exception ex)
+            {
+                LoggerService.LogError($"Ошибка при получении подробностей боя: {ex.Message}");
+            }
+        }
+
+        repo.Save();
     }
 }
