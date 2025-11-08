@@ -12,9 +12,20 @@ class Program
 {
     static void Main()
     {
+        // Настройка логгера (если есть конфиг)
+        //LoggerService.MinimumLevel = LogLevel.Debug;
+        //LoggerService.WriteToConsole = true;
+
+        // 🧹 Очистка старых логов
+        LoggerService.CleanOldLogs(30);
+
+        // Основная логика
+        LoggerService.LogInfo("Бот запущен.");
+        // ...
+
         BossKillParser bossKillParser = new BossKillParser();
         bossKillParser.ParseFromGuildPage("https://sirus.su/base/guilds/x3/3029/latest-boss-kills");
-        //DpsParser parser = new DpsParser();
-        //parser.Parse("https://sirus.su/base/pve-progression/boss-kill/x3/64814");
+        DpsParser parser = new DpsParser();
+        parser.Parse("https://sirus.su/base/pve-progression/boss-kill/x3/64814");
     }
 }

@@ -22,25 +22,24 @@ namespace DPS_bot.Services
                 throw new ArgumentException("Некорректный URL", nameof(fightUrl));
             }
 
-            Console.WriteLine($"[Parse] Start parsing URL: {fightUrl}");
+            LoggerService.LogInfo($"[Parse] Start parsing URL: {fightUrl}");
 
             var options = new ChromeOptions();
             //options.AddArgument("--headless");
 
-            // Используем using, чтобы гарантировать освобождение ресурса драйвера
             using var driver = new ChromeDriver(options);
             try
             {
-                Console.WriteLine("[Parse] Navigating to page...");
+                LoggerService.LogInfo("[Parse] Navigating to page...");
                 driver.Navigate().GoToUrl(fightUrl);
                 var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
                 wait.Until(ExpectedConditions.ElementExists(By.CssSelector("table tbody tr")));
                 var rows = driver.FindElements(By.CssSelector("table tbody tr"));
 
-                Console.WriteLine("[Parse] Page loaded, rows found: " + rows.Count);
+                LoggerService.LogInfo("[Parse] Page loaded, rows found: " + rows.Count);
                 if (rows.Count == 0)
                 {
-                    Console.WriteLine("[ParseFromGuildPage] В таблице нет строк — возможно страница изменилась.");
+                    LoggerService.LogWarning("[ParseFromGuildPage] В таблице нет строк — возможно страница изменилась.");
                 }
 
                 int rowIndex = 0;
@@ -52,7 +51,6 @@ namespace DPS_bot.Services
                         var cols = row.FindElements(By.TagName("td"));
                         if (cols.Count < 8) continue;
 
-                        // Надёжное извлечение текста из первой колонки
                         var col1Text = cols[1].Text?.Trim() ?? string.Empty;
                         var lines = col1Text
                             .Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)
@@ -60,14 +58,12 @@ namespace DPS_bot.Services
                             .Where(s => !string.IsNullOrEmpty(s))
                             .ToArray();
 
-                        // Попытка получить имя босса из ссылки, если она есть
                         string bossName = string.Empty;
                         var anchors = cols[1].FindElements(By.CssSelector("a.q.truncate"));
                         if (anchors.Count > 0) bossName = anchors[0].Text?.Trim() ?? string.Empty;
                         if (string.IsNullOrEmpty(bossName) && lines.Length > 0) bossName = lines[0];
                         string raidName = lines.Length > 1 ? lines[1] : string.Empty;
 
-                        // Парсинг чисел из колонки с распределением (DPS/Healers/Tanks)
                         var countsText = cols[4].Text?.Trim() ?? string.Empty;
                         var countLines = countsText
                             .Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)
@@ -81,7 +77,6 @@ namespace DPS_bot.Services
                         int tanks = countLines.Length > 2 ? ParseIntSafe(countLines[2]) : 0;
                         int totalPlayers = ParseIntSafe(cols[2].Text?.Trim() ?? string.Empty);
 
-                        // FightDuration (формат сайта mm:ss)
                         TimeSpan fightDuration = TimeSpan.Zero;
                         var durText = cols[5].Text?.Trim() ?? string.Empty;
                         if (!string.IsNullOrEmpty(durText))
@@ -114,40 +109,38 @@ namespace DPS_bot.Services
                     }
                     catch (Exception exRow)
                     {
-                        // Логируем проблему конкретной строки для упрощения отладки
                         try
                         {
-                            Console.WriteLine($"[ParseFromGuildPage] Ошибка при разборе строки #{rowIndex}: {exRow.GetType().Name}: {exRow.Message}");
-                            Console.WriteLine($"[ParseFromGuildPage] Row HTML (tr): {row.GetAttribute("outerHTML")}");
+                            LoggerService.LogError($"[ParseFromGuildPage] Ошибка при разборе строки #{rowIndex}: {exRow.GetType().Name}: {exRow.Message}");
+                            LoggerService.LogDebug($"[ParseFromGuildPage] Row HTML (tr) #{rowIndex}: {row.GetAttribute("outerHTML")}");
                         }
                         catch
                         {
-                            Console.WriteLine($"[ParseFromGuildPage] Ошибка при попытке вывести outerHTML строки #{rowIndex}.");
+                            LoggerService.LogError($"[ParseFromGuildPage] Ошибка при попытке вывести outerHTML строки #{rowIndex}.");
                         }
-                        // продолжаем парсить следующие строки
                     }
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[Parse] Ошибка при парсинге: {ex.GetType().Name}: {ex.Message}");
+                LoggerService.LogError($"[Parse] Ошибка при парсинге: {ex.GetType().Name}: {ex.Message}");
             }
             finally
             {
-                Console.WriteLine("[Parse] Driver finished.");
+                LoggerService.LogInfo("[Parse] Driver finished.");
             }
 
-            Console.WriteLine($"Всего найдено {kills.Count} записей");
+            LoggerService.LogInfo($"Всего найдено {kills.Count} записей");
 
             foreach (var kill in kills)
             {
-                Console.WriteLine($"[ParseFromGuildPage] Parsed kill: Boss={kill.BossName}, Raid={kill.RaidName}, " +
-                                 $"Date={kill.FightDate:dd.MM.yyyy HH:mm:ss}, " +
-                                 $"Players={kill.TotalPlayers} (Tanks={kill.Tanks}, Healers={kill.Healers}, DPS={kill.Dps}), " +
-                                 $"Duration={kill.FightDuration:mm\\:ss}");
+                LoggerService.LogInfo($"[ParseFromGuildPage] Parsed kill: Boss={kill.BossName}, Raid={kill.RaidName} {kill.TotalPlayers}, " +
+                                      $"Date={kill.FightDate:dd.MM.yyyy HH:mm:ss}, " +
+                                      $"(Tanks={kill.Tanks}, Healers={kill.Healers}, DPS={kill.Dps}), " +
+                                      $"Duration={kill.FightDuration:mm\\:ss}");
             }
 
-            Console.WriteLine(kills.Count);
+            LoggerService.LogDebug(kills.Count.ToString());
             return kills;
         }
     }
