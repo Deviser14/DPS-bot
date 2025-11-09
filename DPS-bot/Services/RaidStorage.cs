@@ -3,12 +3,12 @@ using DPS_bot.Models;
 
 namespace DPS_bot.Services
 {
-    public class BossKillStorage
+    public class RaidStorage
     {
         private readonly string _filePath;
         private Dictionary<string, HashSet<DateTime>> _kills;
 
-        public BossKillStorage(string filePath)
+        public RaidStorage(string filePath)
         {
             _filePath = filePath;
             Load();

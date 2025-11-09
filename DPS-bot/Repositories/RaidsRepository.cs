@@ -1,22 +1,24 @@
-﻿using System.Text.Json;
-using DPS_bot.Models;
+﻿using DPS_bot.Models;
 using DPS_bot.Services;
+using OpenQA.Selenium.Remote;
+using System.Text.Encodings.Web;
+using System.Text.Json;
 
 namespace DPS_bot.Repositories
 {
-    public class FightRepository
+    public class RaidsRepository
     {
         private readonly string _filePath;
-        private readonly List<Fight> _fights = new();
+        private readonly List<Raid> _fights = new();
         private readonly HashSet<string> _knownKeys = new();
 
-        public FightRepository(string filePath)
+        public RaidsRepository(string filePath)
         {
             _filePath = filePath;
             Load();
         }
 
-        public IReadOnlyList<Fight> All => _fights;
+        public IReadOnlyList<Raid> All => _fights;
 
         private void Load()
         {
@@ -29,7 +31,7 @@ namespace DPS_bot.Repositories
             try
             {
                 var json = File.ReadAllText(_filePath);
-                var loaded = JsonSerializer.Deserialize<List<Fight>>(json);
+                var loaded = JsonSerializer.Deserialize<List<Raid>>(json);
                 if (loaded != null)
                 {
                     _fights.AddRange(loaded);
@@ -45,9 +47,9 @@ namespace DPS_bot.Repositories
             }
         }
 
-        public bool Contains(Fight fight) => _knownKeys.Contains(fight.GetKey());
+        public bool Contains(Raid fight) => _knownKeys.Contains(fight.GetKey());
 
-        public void Add(Fight fight)
+        public void Add(Raid fight)
         {
             var key = fight.GetKey();
             if (_knownKeys.Contains(key)) return;
@@ -61,7 +63,9 @@ namespace DPS_bot.Repositories
         {
             try
             {
-                var json = JsonSerializer.Serialize(_fights, new JsonSerializerOptions { WriteIndented = true });
+                var json = JsonSerializer.Serialize(_fights, new JsonSerializerOptions { WriteIndented = true,
+                    Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+                });
                 File.WriteAllText(_filePath, json);
                 LoggerService.LogInfo($"Сохранено {_fights.Count} боёв в {_filePath}");
             }

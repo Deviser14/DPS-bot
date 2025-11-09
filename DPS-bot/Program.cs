@@ -28,22 +28,31 @@ class Program
         // Инициализация репозитория
         var reportPath = appConfig.Bot.ReportPath;
         var filePath = Path.Combine(reportPath, "boss_kills.json");
-        var repo = new FightRepository(filePath);
+        var repo = new RaidsRepository(filePath);
 
         // Парсинг свежих боёв
-        var bossKillParser = new BossKillParser(appConfig);
+        var bossKillParser = new RaidParser(appConfig);
         var freshFights = bossKillParser.ParseFromGuildPage(appConfig.Domen.BaseUrl); // без подробностей
 
-        var dpsParser = new DpsParser();
+        var dpsParser = new RaidInfoParser();
 
         foreach (var fight in freshFights)
         {
-            if (repo.Contains(fight)) continue;
+            if (repo.Contains(fight))
+            {
+                Console.WriteLine($"бой {fight.GetKey} уже есть");
+                continue;
+            }
 
             try
             {
-                var detailed = bossKillParser.ParseFromGuildPage; // Получаем подробности
-                repo.Add(detailed);
+                var detailed = dpsParser.Parse(fight.DetailsUrl); // Получаем подробности
+                fight.Players = detailed.Players;
+                fight.FightDate = detailed.KilledAt;
+                fight.Attempts = detailed.Attempts;
+                fight.OverallDps = detailed.OverallDps;
+                fight.OverallHps = detailed.OverallHps;
+                repo.Add(fight);
             }
             catch (Exception ex)
             {

@@ -10,13 +10,13 @@ using System.Net.WebSockets;
 
 namespace DPS_bot.Services
 {
-    public class BossKillParser
+    public class RaidParser
     {
 
             private readonly string _baseUrl;
             private readonly string _reportPath;
 
-            public BossKillParser(AppConfig config)
+            public RaidParser(AppConfig config)
             {
                 _baseUrl = config.Domen.BaseUrl;
                 _reportPath = config.Bot.ReportPath;
@@ -26,9 +26,9 @@ namespace DPS_bot.Services
         /// <summary>
         /// Парсит страницу гильдии и возвращает список боёв.
         /// </summary>
-        public List<Fight> ParseFromGuildPage(string fightUrl)
+        public List<Raid> ParseFromGuildPage(string fightUrl)
         {
-            var kills = new List<Fight>();
+            var kills = new List<Raid>();
 
             if (string.IsNullOrEmpty(fightUrl) || !Uri.IsWellFormedUriString(fightUrl, UriKind.Absolute))
             {
@@ -108,7 +108,6 @@ namespace DPS_bot.Services
                         DateTime fightDate = DateTime.MinValue;
                         DateTime.TryParse(cols[6].Text?.Trim() ?? string.Empty, out fightDate);
 
-                        LoggerService.LogDebug("[Parse] Парсим ссылку подробностей рейда");
                         var detailsUrl = string.Empty;
                         try
                         {
@@ -121,8 +120,8 @@ namespace DPS_bot.Services
                                 if (!detailUri.IsAbsoluteUri)
                                 {
                                     detailUri = new Uri(new Uri(_baseUrl), detailUri);
-                                    detailsUrl = detailUri.ToString();
                                 }
+                                    detailsUrl = detailUri.ToString();
                                 LoggerService.LogDebug($"[Parse] Absolute Detail URL: {detailUri}");
                             }
                         }
@@ -134,7 +133,7 @@ namespace DPS_bot.Services
                             LoggerService.LogDebug($"[Parse] Row HTML (td): {cols[7].GetAttribute("outerHTML")}");
                         }
 
-                        kills.Add(new Fight
+                        kills.Add(new Raid
                         {
                             BossName = bossName ?? string.Empty,
                             RaidName = raidName ?? string.Empty,
@@ -177,7 +176,8 @@ namespace DPS_bot.Services
                 LoggerService.LogDebug($"[ParseFromGuildPage] Parsed kill: Boss={kill.BossName}, Raid={kill.RaidName} {kill.TotalPlayers}, " +
                                       $"Date={kill.FightDate:dd.MM.yyyy HH:mm:ss}, " +
                                       $"(Tanks={kill.Tanks}, Healers={kill.Healers}, DPS={kill.Dps}), " +
-                                      $"Duration={kill.FightDuration:mm\\:ss}");
+                                      $"Duration={kill.FightDuration:mm\\:ss}" +
+                                      $"\n{kill.DetailsUrl}");
             }
 
             LoggerService.LogDebug(kills.Count.ToString());

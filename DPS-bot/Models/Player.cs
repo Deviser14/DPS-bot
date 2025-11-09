@@ -15,7 +15,7 @@ namespace DPS_bot.Models
         public string? Guild { get; set; }
         public string? ILvl { get; set; }
         public string? Category { get; set; }
-        public string? Ivs { get; set; }
-        public string? Uvs { get; set; }
+        public string? Hps { get; set; }
+        public string? Dps { get; set; }
     }
 }

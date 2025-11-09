@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace DPS_bot.Models
 {
-    public class Fight
+    public class Raid
     {
-        public string GetKey() =>
-            $"{BossName}_{RaidName}_{FightDate:yyyy-MM-dd_HH-mm}";
 
         public string BossName { get; set; } = string.Empty;
         public string RaidName { get; set; } = string.Empty;
@@ -17,11 +15,15 @@ namespace DPS_bot.Models
         public int Tanks { get; set; }
         public int Healers { get; set; }
         public int Dps { get; set; }
+        public int OverallDps { get; set; }
+        public int OverallHps { get; set; }
         public DateTime FightDate { get; set; } = DateTime.MinValue;
         public TimeSpan FightDuration { get; set; } = TimeSpan.Zero;
         public List<Player> Players { get; set; } = new List<Player>();
-        public int BossPulls { get; set; }
+        public int Attempts { get; set; }
         public List<Item> Loot { get; set; } = new List<Item>();
         public string DetailsUrl { get; set; } = string.Empty;
+        public string GetKey() =>
+            $"{BossName}_{RaidName}({TotalPlayers})_{DetailsUrl}";
     }
 }
