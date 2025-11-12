@@ -10,13 +10,12 @@ class Program
 {
     static void Main()
     {
-        // Загрузка конфигурации
+        // Load configuration from the application's base directory
         var configuration = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
+            .SetBasePath(AppContext.BaseDirectory)
             .AddJsonFile("appsettings.json", optional: false)
             .Build();
 
-        // Загружаем AppConfig (а не ConfigService)
         var appConfig = configuration.Get<AppConfig>();
 
         // Настройка логгера
@@ -25,14 +24,12 @@ class Program
         LoggerService.LogInfo("Бот запущен.");
         Console.WriteLine($"Guild ID: {appConfig.Discord.GuildId}");
 
-        // Инициализация репозитория
         var reportPath = appConfig.Bot.ReportPath;
         var filePath = Path.Combine(reportPath, "boss_kills.json");
         var repo = new RaidsRepository(filePath);
 
-        // Парсинг свежих боёв
         var bossKillParser = new RaidParser(appConfig);
-        var freshFights = bossKillParser.ParseFromGuildPage(appConfig.Domen.BaseUrl); // без подробностей
+        var freshFights = bossKillParser.ParseFromGuildPage(appConfig.Domen.BaseUrl);
 
         var dpsParser = new RaidInfoParser();
 
@@ -46,7 +43,7 @@ class Program
 
             try
             {
-                var detailed = dpsParser.Parse(fight.DetailsUrl); // Получаем подробности
+                var detailed = dpsParser.Parse(fight.DetailsUrl);
                 fight.Players = detailed.Players;
                 fight.FightDate = detailed.KilledAt;
                 fight.Attempts = detailed.Attempts;

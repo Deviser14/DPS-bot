@@ -88,7 +88,8 @@ namespace DPS_bot.Services
                         int dps = countLines.Length > 0 ? ParseIntSafe(countLines[0]) : 0;
                         int healers = countLines.Length > 1 ? ParseIntSafe(countLines[1]) : 0;
                         int tanks = countLines.Length > 2 ? ParseIntSafe(countLines[2]) : 0;
-                        int totalPlayers = ParseIntSafe(cols[2].Text?.Trim() ?? string.Empty);
+                        int totalPlayers = ParseIntSafe(cols[2].Text?.Trim().Substring(0,2) ?? string.Empty);
+                        string difficulty = cols[2].Text?.Trim() ??string.Empty;
 
                         TimeSpan fightDuration = TimeSpan.Zero;
                         var durText = cols[5].Text?.Trim() ?? string.Empty;
@@ -137,6 +138,7 @@ namespace DPS_bot.Services
                         {
                             BossName = bossName ?? string.Empty,
                             RaidName = raidName ?? string.Empty,
+                            RaidDifficult = difficulty,
                             TotalPlayers = totalPlayers,
                             Tanks = tanks,
                             Healers = healers,

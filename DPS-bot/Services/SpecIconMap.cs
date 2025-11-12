@@ -10,7 +10,6 @@
         // Воин
         { "ability_warrior_innerrage", "Неистовство" },
         { "inv_shield_06", "Защита" },
-        { "ability_rogue_eviscerate", "Оружие" },
 
         // Маг
         { "spell_holy_magicalsentry", "Тайная магия" },

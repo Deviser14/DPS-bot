@@ -11,6 +11,7 @@ namespace DPS_bot.Models
 
         public string BossName { get; set; } = string.Empty;
         public string RaidName { get; set; } = string.Empty;
+        public string RaidDifficult {  get; set; } = string.Empty;
         public int TotalPlayers { get; set; }
         public int Tanks { get; set; }
         public int Healers { get; set; }
@@ -24,6 +25,6 @@ namespace DPS_bot.Models
         public List<Item> Loot { get; set; } = new List<Item>();
         public string DetailsUrl { get; set; } = string.Empty;
         public string GetKey() =>
-            $"{BossName}_{RaidName}({TotalPlayers})_{DetailsUrl}";
+            $"{BossName}_{RaidName}({RaidDifficult})_{DetailsUrl}";
     }
 }
